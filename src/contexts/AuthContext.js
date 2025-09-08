@@ -42,7 +42,12 @@ export const AuthProvider = ({ children }) => {
           return;
         }
 
+        const token = localStorage.getItem("auth_token");
         const response = await fetch(`${API_BASE_URL}/auth/status`, {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+            "Content-Type": "application/json"
+          },
           credentials: "include"
         });
 
@@ -87,9 +92,23 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = useCallback(async () => {
     try {
+      const token = localStorage.getItem("auth_token");
       const response = await fetch(`${API_BASE_URL}/auth/status`, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+          "Content-Type": "application/json"
+        },
         credentials: "include"
       });
+
+      if (response.status === 401) {
+        // Token is invalid or expired
+        localStorage.removeItem("auth_token");
+        setUserWithPersistence(null);
+        setLoading(false);
+        return;
+      }
+
       const data = await response.json();
 
       if (data.authenticated) {
@@ -122,13 +141,26 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await fetch(`${API_BASE_URL}/auth/logout`, {
-        method: "POST",
-        credentials: "include"
-      });
+      const token = localStorage.getItem("auth_token");
+      if (token) {
+        await fetch(`${API_BASE_URL}/auth/logout`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          credentials: "include"
+        });
+      }
+
+      // Clear token and user state
+      localStorage.removeItem("auth_token");
       setUserWithPersistence(null);
     } catch (error) {
       console.error("Logout failed:", error);
+      // Still clear local state even if server request fails
+      localStorage.removeItem("auth_token");
+      setUserWithPersistence(null);
     }
   };
 
@@ -175,43 +207,25 @@ export const AuthProvider = ({ children }) => {
   const makeAuthenticatedRequest = useCallback(
     async (url, options = {}) => {
       try {
+        const token = localStorage.getItem("auth_token");
+
         // If url is relative, prepend the API base URL
         const fullUrl = url.startsWith("http") ? url : `${API_BASE_URL}${url}`;
         const response = await fetch(fullUrl, {
           ...options,
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+            "Content-Type": "application/json",
+            ...options.headers
+          },
           credentials: "include"
         });
 
         if (response.status === 401) {
-          console.warn("401 Unauthorized - attempting to refresh auth status");
+          console.warn("401 Unauthorized - token expired or invalid");
 
-          // Try to refresh auth status first
-          try {
-            const authResponse = await fetch(`${API_BASE_URL}/auth/status`, {
-              credentials: "include"
-            });
-            const authData = await authResponse.json();
-
-            if (authData.authenticated) {
-              // User is actually authenticated, update the user state and retry the original request
-              setUserWithPersistence(authData.user);
-              console.log("Auth status refreshed, retrying request");
-
-              // Retry the original request
-              const retryResponse = await fetch(fullUrl, {
-                ...options,
-                credentials: "include"
-              });
-
-              if (retryResponse.ok) {
-                return await retryResponse.json();
-              }
-            }
-          } catch (authError) {
-            console.error("Auth status check failed:", authError);
-          }
-
-          // If we get here, authentication truly failed
+          // Clear invalid token and user state
+          localStorage.removeItem("auth_token");
           setUserWithPersistence(null);
 
           // Check if we're in development (React's NODE_ENV or custom REACT_APP_NODE_ENV)
