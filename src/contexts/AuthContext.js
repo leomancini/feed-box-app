@@ -32,9 +32,11 @@ export const AuthProvider = ({ children }) => {
     const initialAuthCheck = async () => {
       try {
         console.log("Starting initial auth check with API URL:", API_BASE_URL);
-        
+
         if (!API_BASE_URL) {
-          console.error("API_BASE_URL is not set! Check environment variables.");
+          console.error(
+            "API_BASE_URL is not set! Check environment variables."
+          );
           setUserWithPersistence(null);
           setLoading(false);
           return;
@@ -43,11 +45,19 @@ export const AuthProvider = ({ children }) => {
         const response = await fetch(`${API_BASE_URL}/auth/status`, {
           credentials: "include"
         });
-        
-        console.log("Auth status response:", response.status, response.statusText);
-        
+
+        console.log(
+          "Auth status response:",
+          response.status,
+          response.statusText
+        );
+
         if (!response.ok) {
-          console.error("Auth status request failed:", response.status, response.statusText);
+          console.error(
+            "Auth status request failed:",
+            response.status,
+            response.statusText
+          );
           setUserWithPersistence(null);
           setLoading(false);
           return;
@@ -99,10 +109,12 @@ export const AuthProvider = ({ children }) => {
   const login = () => {
     if (!API_BASE_URL) {
       console.error("Cannot login: API_BASE_URL is not set!");
-      alert("Configuration error: API URL not set. Please check environment variables.");
+      alert(
+        "Configuration error: API URL not set. Please check environment variables."
+      );
       return;
     }
-    
+
     const loginUrl = `${API_BASE_URL}/auth/google`;
     console.log("Redirecting to login URL:", loginUrl);
     window.location.href = loginUrl;
@@ -203,9 +215,10 @@ export const AuthProvider = ({ children }) => {
           setUserWithPersistence(null);
 
           // Check if we're in development (React's NODE_ENV or custom REACT_APP_NODE_ENV)
-          const isDevelopment = process.env.NODE_ENV === "development" || 
-                               process.env.REACT_APP_NODE_ENV === "development";
-          
+          const isDevelopment =
+            process.env.NODE_ENV === "development" ||
+            process.env.REACT_APP_NODE_ENV === "development";
+
           if (isDevelopment) {
             throw new Error(
               "Authentication expired. Please refresh the page and log in again."
