@@ -776,8 +776,7 @@ const Dashboard = () => {
                     <InfoValue>
                       <a
                         href={`${
-                          process.env.REACT_APP_API_URL ||
-                          "http://localhost:3115"
+                          process.env.REACT_APP_API_BASE_URL
                         }/devices/${encodeURIComponent(
                           device.serialNumber || device.id
                         )}/data`}

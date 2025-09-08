@@ -8,8 +8,8 @@ import {
 
 const AuthContext = createContext();
 
-// Get the API base URL from environment variable or default to localhost:3115
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3115";
+// Get the API base URL from environment variable
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
