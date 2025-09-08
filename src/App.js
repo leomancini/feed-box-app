@@ -1,18 +1,46 @@
 import React from "react";
-import styled from "styled-components";
-
-const Page = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-size: 24px;
-  color: #333;
-`;
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate
+} from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import LoginPage from "./pages/LoginPage";
+import Dashboard from "./pages/Dashboard";
+import DeviceEdit from "./pages/DeviceEdit";
+import { AuthSuccess, AuthFailure } from "./routes/AuthCallback";
 
 function App() {
-  return <Page>Hello world!</Page>;
+  return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/auth/success" element={<AuthSuccess />} />
+          <Route path="/auth/failure" element={<AuthFailure />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/device/edit/:serialNumber"
+            element={
+              <ProtectedRoute>
+                <DeviceEdit />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
 }
 
 export default App;
-
