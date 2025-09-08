@@ -31,12 +31,33 @@ export const AuthProvider = ({ children }) => {
     // Inline auth check to avoid dependency issues
     const initialAuthCheck = async () => {
       try {
+        console.log("Starting initial auth check with API URL:", API_BASE_URL);
+        
+        if (!API_BASE_URL) {
+          console.error("API_BASE_URL is not set! Check environment variables.");
+          setUserWithPersistence(null);
+          setLoading(false);
+          return;
+        }
+
         const response = await fetch(`${API_BASE_URL}/auth/status`, {
           credentials: "include"
         });
+        
+        console.log("Auth status response:", response.status, response.statusText);
+        
+        if (!response.ok) {
+          console.error("Auth status request failed:", response.status, response.statusText);
+          setUserWithPersistence(null);
+          setLoading(false);
+          return;
+        }
+
         const data = await response.json();
+        console.log("Auth status data:", data);
 
         if (data.authenticated) {
+          console.log("User is authenticated:", data.user);
           setUserWithPersistence(data.user);
         } else {
           console.log("Initial auth check: User not authenticated");
@@ -44,6 +65,7 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (error) {
         console.error("Auth check failed:", error);
+        console.error("Error details:", error.message);
         setUserWithPersistence(null);
       } finally {
         setLoading(false);
@@ -75,7 +97,15 @@ export const AuthProvider = ({ children }) => {
   }, [setUserWithPersistence]);
 
   const login = () => {
-    window.location.href = `${API_BASE_URL}/auth/google`;
+    if (!API_BASE_URL) {
+      console.error("Cannot login: API_BASE_URL is not set!");
+      alert("Configuration error: API URL not set. Please check environment variables.");
+      return;
+    }
+    
+    const loginUrl = `${API_BASE_URL}/auth/google`;
+    console.log("Redirecting to login URL:", loginUrl);
+    window.location.href = loginUrl;
   };
 
   const logout = async () => {
@@ -172,8 +202,11 @@ export const AuthProvider = ({ children }) => {
           // If we get here, authentication truly failed
           setUserWithPersistence(null);
 
-          // In development, provide a more helpful error
-          if (process.env.NODE_ENV === "development") {
+          // Check if we're in development (React's NODE_ENV or custom REACT_APP_NODE_ENV)
+          const isDevelopment = process.env.NODE_ENV === "development" || 
+                               process.env.REACT_APP_NODE_ENV === "development";
+          
+          if (isDevelopment) {
             throw new Error(
               "Authentication expired. Please refresh the page and log in again."
             );

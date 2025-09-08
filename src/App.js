@@ -11,6 +11,7 @@ import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
 import DeviceEdit from "./pages/DeviceEdit";
 import { AuthSuccess, AuthFailure } from "./routes/AuthCallback";
+import DebugInfo from "./components/DebugInfo";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
+        <DebugInfo />
       </Router>
     </AuthProvider>
   );
