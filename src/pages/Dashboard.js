@@ -463,7 +463,6 @@ const Dashboard = () => {
       setDevices(response.devices || []);
     } catch (error) {
       setError(error.message || "Failed to fetch devices");
-      console.error("Failed to fetch devices:", error);
     } finally {
       setLoading(false);
     }
@@ -491,7 +490,6 @@ const Dashboard = () => {
           });
         }
       } catch (error) {
-        console.error("Failed to fetch sources:", error);
         // Fallback to default sources if API fails
         setSources([
           { id: "headlines", name: "Headlines" },
@@ -553,8 +551,6 @@ const Dashboard = () => {
         timezone: createFormData.timezone
       };
 
-      console.log("Creating device with data:", deviceData); // Debug log
-
       await makeAuthenticatedRequest("/devices/admin/create-unlinked", {
         method: "POST",
         headers: {
@@ -583,7 +579,6 @@ const Dashboard = () => {
       // Refresh the devices list
       await fetchDevices();
     } catch (error) {
-      console.error("Failed to create device:", error);
       setError(error.message || "Failed to create device");
     } finally {
       setCreateLoading(false);
@@ -718,14 +713,16 @@ const Dashboard = () => {
                 </DeviceName>
 
                 <DeviceInfo>
-                  <InfoRow>
-                    <InfoLabel>Owner</InfoLabel>
-                    <InfoValue>
-                      {device.owner
-                        ? device.owner.name || device.owner.email || "Unknown"
-                        : "None"}
-                    </InfoValue>
-                  </InfoRow>
+                  {isAdmin && (
+                    <InfoRow>
+                      <InfoLabel>Owner</InfoLabel>
+                      <InfoValue>
+                        {device.owner
+                          ? device.owner.name || device.owner.email || "Unknown"
+                          : "None"}
+                      </InfoValue>
+                    </InfoRow>
+                  )}
 
                   {device.source && (
                     <InfoRow>

@@ -31,12 +31,7 @@ export const AuthProvider = ({ children }) => {
     // Inline auth check to avoid dependency issues
     const initialAuthCheck = async () => {
       try {
-        console.log("Starting initial auth check with API URL:", API_BASE_URL);
-
         if (!API_BASE_URL) {
-          console.error(
-            "API_BASE_URL is not set! Check environment variables."
-          );
           setUserWithPersistence(null);
           setLoading(false);
           return;
@@ -51,36 +46,20 @@ export const AuthProvider = ({ children }) => {
           credentials: "include"
         });
 
-        console.log(
-          "Auth status response:",
-          response.status,
-          response.statusText
-        );
-
         if (!response.ok) {
-          console.error(
-            "Auth status request failed:",
-            response.status,
-            response.statusText
-          );
           setUserWithPersistence(null);
           setLoading(false);
           return;
         }
 
         const data = await response.json();
-        console.log("Auth status data:", data);
 
         if (data.authenticated) {
-          console.log("User is authenticated:", data.user);
           setUserWithPersistence(data.user);
         } else {
-          console.log("Initial auth check: User not authenticated");
           setUserWithPersistence(null);
         }
       } catch (error) {
-        console.error("Auth check failed:", error);
-        console.error("Error details:", error.message);
         setUserWithPersistence(null);
       } finally {
         setLoading(false);
@@ -114,11 +93,9 @@ export const AuthProvider = ({ children }) => {
       if (data.authenticated) {
         setUserWithPersistence(data.user);
       } else {
-        console.log("Auth status check: User not authenticated");
         setUserWithPersistence(null);
       }
     } catch (error) {
-      console.error("Auth check failed:", error);
       setUserWithPersistence(null);
     } finally {
       setLoading(false);
@@ -127,7 +104,6 @@ export const AuthProvider = ({ children }) => {
 
   const login = () => {
     if (!API_BASE_URL) {
-      console.error("Cannot login: API_BASE_URL is not set!");
       alert(
         "Configuration error: API URL not set. Please check environment variables."
       );
@@ -135,7 +111,6 @@ export const AuthProvider = ({ children }) => {
     }
 
     const loginUrl = `${API_BASE_URL}/auth/google`;
-    console.log("Redirecting to login URL:", loginUrl);
     window.location.href = loginUrl;
   };
 
@@ -157,7 +132,6 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem("auth_token");
       setUserWithPersistence(null);
     } catch (error) {
-      console.error("Logout failed:", error);
       // Still clear local state even if server request fails
       localStorage.removeItem("auth_token");
       setUserWithPersistence(null);
@@ -181,7 +155,6 @@ export const AuthProvider = ({ children }) => {
         return data;
       }
     } catch (error) {
-      console.error("Profile update failed:", error);
       throw error;
     }
   };
@@ -199,7 +172,6 @@ export const AuthProvider = ({ children }) => {
         return data.user;
       }
     } catch (error) {
-      console.error("Failed to get user profile:", error);
       throw error;
     }
   };
@@ -222,8 +194,6 @@ export const AuthProvider = ({ children }) => {
         });
 
         if (response.status === 401) {
-          console.warn("401 Unauthorized - token expired or invalid");
-
           // Clear invalid token and user state
           localStorage.removeItem("auth_token");
           setUserWithPersistence(null);
@@ -253,7 +223,6 @@ export const AuthProvider = ({ children }) => {
 
         return await response.json();
       } catch (error) {
-        console.error("Request failed:", error);
         throw error;
       }
     },

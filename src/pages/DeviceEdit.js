@@ -363,7 +363,6 @@ const DeviceEdit = () => {
         const response = await makeAuthenticatedRequest("/sources/list");
         setSources(response.sources || response || []);
       } catch (error) {
-        console.error("Failed to fetch sources:", error);
         setSources([]);
       } finally {
         setSourcesLoading(false);
@@ -381,7 +380,6 @@ const DeviceEdit = () => {
         const response = await makeAuthenticatedRequest("/users/list");
         setUsers(response.users || response || []);
       } catch (error) {
-        console.error("Failed to fetch users:", error);
         setUsers([]);
       } finally {
         setUsersLoading(false);

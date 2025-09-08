@@ -54,41 +54,29 @@ const AuthSuccess = () => {
   useEffect(() => {
     const handleSuccess = async () => {
       try {
-        console.log("AuthSuccess: Starting callback handling");
-        console.log("AuthSuccess: Current URL:", window.location.href);
-        
         // Check for token in URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('token');
-        
-        console.log("AuthSuccess: Token from URL:", token ? "Present" : "Missing");
-        
+        const token = urlParams.get("token");
+
         if (token) {
           // Store token securely
-          localStorage.setItem('auth_token', token);
-          console.log("AuthSuccess: Token stored successfully");
-          
+          localStorage.setItem("auth_token", token);
+
           // Clean URL by removing token parameter
           const cleanUrl = window.location.pathname;
           window.history.replaceState({}, document.title, cleanUrl);
-          console.log("AuthSuccess: URL cleaned");
         } else {
-          console.warn("AuthSuccess: No token found in URL - checking existing token");
         }
-        
+
         // Wait a moment for token to be processed
         await new Promise((resolve) => setTimeout(resolve, 500));
-        
-        console.log("AuthSuccess: Checking auth status...");
+
         await checkAuthStatus();
-        
-        console.log("AuthSuccess: Navigating to dashboard");
+
         navigate("/dashboard", { replace: true });
       } catch (error) {
-        console.error("Auth success handling failed:", error);
-        console.error("Error details:", error.message);
         // Clear any potentially invalid token
-        localStorage.removeItem('auth_token');
+        localStorage.removeItem("auth_token");
         navigate("/login", { replace: true });
       }
     };
