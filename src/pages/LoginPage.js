@@ -89,7 +89,7 @@ const LoginPage = () => {
   return (
     <LoginContainer>
       <LoginCard>
-        <Title>Welcome to FeedBox</Title>
+        <Title>Welcome to Feed Box</Title>
         <Subtitle>Sign in to access your personalized feed</Subtitle>
         <LoginButton onClick={login}>
           <GoogleIcon />

@@ -482,7 +482,7 @@ const DeviceEdit = () => {
     return (
       <Container>
         <Header>
-          <Logo>FeedBox</Logo>
+          <Logo>Feed Box</Logo>
           <BackButton onClick={() => navigate("/dashboard")}>
             ← Back to Dashboard
           </BackButton>
@@ -498,7 +498,7 @@ const DeviceEdit = () => {
     return (
       <Container>
         <Header>
-          <Logo>FeedBox</Logo>
+          <Logo>Feed Box</Logo>
           <BackButton onClick={() => navigate("/dashboard")}>
             ← Back to Dashboard
           </BackButton>
@@ -513,7 +513,7 @@ const DeviceEdit = () => {
   return (
     <Container>
       <Header>
-        <Logo>FeedBox</Logo>
+        <Logo>Feed Box</Logo>
         <BackButton onClick={() => navigate("/dashboard")}>
           ← Back to Dashboard
         </BackButton>

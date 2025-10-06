@@ -689,7 +689,7 @@ const Dashboard = () => {
           <EmptyState>
             <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📱</div>
             <h4>No devices connected</h4>
-            <p>Connect your first device to get started with FeedBox.</p>
+            <p>Connect your first device to get started with Feed Box.</p>
           </EmptyState>
         ) : (
           <DeviceGrid>
@@ -808,7 +808,7 @@ const Dashboard = () => {
     <>
       <DashboardContainer>
         <Header>
-          <Logo>FeedBox</Logo>
+          <Logo>Feed Box</Logo>
           <UserSection>
             <UserInfo>
               <UserName>
